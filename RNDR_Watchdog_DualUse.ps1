@@ -615,8 +615,10 @@ if (!(Test-Path $RNDRClientLaunchCommand)){$RNDRClientLaunchCommand = "$currentP
 $RNDRProcessName = Read-IniContent "rndr_app" "RNDRProcessName" 
 
 #  dual_app 
-$DualLauchCommand = Read-IniContent "dual_app" "DualLauchCommand" 
-if (!(Test-Path $DualLauchCommand)){$DualLauchCommand = "$currentPath\$DualLauchCommand"}
+$DualLauchCommand = Read-IniContent "dual_app" "DualLauchCommand"
+if (-not $DualLauchCommand -eq "") {
+	if (!(Test-Path $DualLauchCommand)){$DualLauchCommand = "$currentPath\$DualLauchCommand"}
+}
 $DualProcessName = Read-IniContent "dual_app" "DualProcessName" 
 $DualWebAPIShutdownCommand = Read-IniContent "dual_app" "DualWebAPIShutdownCommand" 
 
@@ -767,8 +769,9 @@ while ($true)
                 Write-Host (Get-Date -format "yyyy-MM-dd HH:mm:ss") : Dual started. RNDR idle.
 
                 # Start Dual if not running
-                $DualProcess = Launch-Dual-Workload
-
+				if (-not $DualLauchCommand -eq "") {
+					$DualProcess = Launch-Dual-Workload
+				}
             }
             else
             {
