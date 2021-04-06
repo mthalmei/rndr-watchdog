@@ -303,11 +303,13 @@ Function Write-Watchdog-Status {
     $WatchdogFormatted = '{0:#,##0.00} hours' -f (New-TimeSpan -Start $StartDate).totalhours
     $RNDRFormatted = '{0:#,##0.00} hours' -f $RNDRRuntimeCounter
     $DualFormatted = '{0:#,##0.00} hours' -f $DualRuntimeCounter
+    $percentRNDRFormatted = '{00}%' -f $([math]::Floor(($RNDRRuntimeCounter)/((New-TimeSpan -Start $StartDate).Totalhours)*100))
+    $percentDualFormatted = '{00}%' -f $([math]::Floor(($DualRuntimeCounter)/((New-TimeSpan -Start $StartDate).Totalhours)*100))
     $alltimeWatchdogFormatted = '{0:#,##0} hours' -f $([math]::Floor((New-TimeSpan -Start $StartDate).Totalhours + $alltimeWatchdog))
     $alltimeRNDRFormatted = '{0:#,##0} hours' -f $([math]::Floor($RNDRRuntimeCounter + $alltimeRNDR))
     $alltimeDualFormatted = '{0:#,##0} hours' -f $([math]::Floor($DualRuntimeCounter + $alltimeDual))
-    $percentRNDRFormatted = '{00}%' -f $([math]::Floor((($RNDRRuntimeCounter + $alltimeRNDR))/((New-TimeSpan -Start $StartDate).Totalhours + $alltimeWatchdog)*100))
-    $percentDualFormatted = '{00}%' -f $([math]::Floor((($DualRuntimeCounter + $alltimeDual))/((New-TimeSpan -Start $StartDate).Totalhours + $alltimeWatchdog)*100))
+    $alltimePercentRNDRFormatted = '{00}%' -f $([math]::Floor((($RNDRRuntimeCounter + $alltimeRNDR))/((New-TimeSpan -Start $StartDate).Totalhours + $alltimeWatchdog)*100))
+    $alltimePercentDualFormatted = '{00}%' -f $([math]::Floor((($DualRuntimeCounter + $alltimeDual))/((New-TimeSpan -Start $StartDate).Totalhours + $alltimeWatchdog)*100))
     $alltimeRNDRRestartsFormatted = '{0:#,##0}' -f ($global:RNDRRestarts + $alltimeRNDRRestarts)
     $alltimeDualStartsFormatted = '{0:#,##0}' -f ($global:DualStarts + $alltimeDualStarts)
         
@@ -315,8 +317,8 @@ Function Write-Watchdog-Status {
     
     Write-Progress -Id 1 -Activity "Current work: $CurrentActivity - $(Get-Date -format "yyyy-MM-dd HH:mm:ss")" -Status "RNDR restarts $global:RNDRRestarts, alltime $alltimeRNDRRestartsFormatted - Dual starts $global:DualStarts, alltime $alltimeDualStartsFormatted"    
     Write-Progress -Id 2 -Activity "Watchdog uptime" -Status "$WatchdogFormatted, alltime $alltimeWatchdogFormatted" 
-    Write-Progress -Id 3 -Activity "RNDR runtime" -Status "$RNDRFormatted, alltime $alltimeRNDRFormatted ($percentRNDRFormatted) - $alltimeRNDRJobsCompletedFormatted"
-    Write-Progress -Id 4 -Activity "Dual runtime" -Status "$DualFormatted, alltime $alltimeDualFormatted ($percentDualFormatted)"
+    Write-Progress -Id 3 -Activity "RNDR runtime" -Status "$RNDRFormatted ($percentRNDRFormatted), alltime $alltimeRNDRFormatted ($alltimePercentRNDRFormatted) - $alltimeRNDRJobsCompletedFormatted"
+    Write-Progress -Id 4 -Activity "Dual runtime" -Status "$DualFormatted ($percentDualFormatted), alltime $alltimeDualFormatted ($alltimePercentDualFormatted)"
 
     # Save stats to registry
     Update-Registry-Runtimes 
